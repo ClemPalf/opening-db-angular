@@ -1,11 +1,69 @@
 <main>
-  <header>
-    <h1>Opening DB</h1>
-    <p>Import an opening line and explore its variations.</p>
+  <header class="toolbar">
+    <h1>Study repertoire</h1>
   </header>
 
   <section class="study" aria-labelledby="study-heading">
-    <app-chessboard [fen]="position().fen" [flipped]="flipped()" />
+    <div class="board-pane">
+      <div class="board-frame">
+        <app-chessboard
+          [fen]="position().fen"
+          [flipped]="flipped()"
+          [lastMove]="position().moveSquares"
+        />
+      </div>
+
+      <nav class="board-controls" aria-label="Board controls">
+        <button
+          type="button"
+          aria-label="Go to start"
+          title="Go to start"
+          [disabled]="path().length === 1"
+          (click)="rewind(0)"
+        >
+          <span aria-hidden="true">⇤</span>
+        </button>
+        <button
+          type="button"
+          aria-label="Previous move"
+          title="Previous move"
+          [disabled]="path().length === 1"
+          (click)="rewind(path().length - 2)"
+        >
+          <span aria-hidden="true">‹</span>
+        </button>
+        <button
+          type="button"
+          aria-label="Next move"
+          title="Next move"
+          [disabled]="!position().continuations.length"
+          (click)="advance(false)"
+        >
+          <span aria-hidden="true">›</span>
+        </button>
+        <button
+          type="button"
+          aria-label="Go to end of line"
+          title="Go to end of line"
+          [disabled]="!position().continuations.length"
+          (click)="advance(true)"
+        >
+          <span aria-hidden="true">⇥</span>
+        </button>
+        <button
+          type="button"
+          aria-label="Flip board"
+          title="Flip board"
+          class="flip"
+          [attr.aria-pressed]="flipped()"
+          (click)="flipped.set(!flipped())"
+        >
+          <span aria-hidden="true">⇅</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="divider" aria-hidden="true"></div>
     <div class="card">
       <h2 id="study-heading">Study line</h2>
       <nav aria-label="Moves played" class="button-row">
@@ -33,21 +91,17 @@
         }
       </div>
 
-      <button type="button" class="secondary flip" (click)="flipped.set(!flipped())">
-        Flip board
-      </button>
+      <details class="import">
+        <summary>Import PGN</summary>
+        <form (submit)="loadPgn($event)">
+          <label for="pgn">PGN notation</label>
+          <textarea id="pgn" rows="4" [formField]="importForm.text"></textarea>
+          @if (error()) {
+            <p role="alert">{{ error() }}</p>
+          }
+          <button type="submit">Load study line</button>
+        </form>
+      </details>
     </div>
-  </section>
-
-  <section class="card import" aria-labelledby="import-heading">
-    <h2 id="import-heading">Import PGN</h2>
-    <form (submit)="loadPgn($event)">
-      <label for="pgn">PGN notation</label>
-      <textarea id="pgn" rows="4" [formField]="importForm.text"></textarea>
-      @if (error()) {
-        <p role="alert">{{ error() }}</p>
-      }
-      <button type="submit">Load study line</button>
-    </form>
   </section>
 </main>

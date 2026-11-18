@@ -1,5 +1,5 @@
 import { Component, computed, input } from '@angular/core';
-import { Chess } from 'chess.js';
+import { Chess, type Square } from 'chess.js';
 
 const PIECES = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' } as const;
 
@@ -9,7 +9,11 @@ const PIECES = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' } as
     <figure aria-label="Chess position">
       <div class="board" aria-hidden="true">
         @for (square of squares(); track square.label) {
-          <div [class.dark]="square.dark" [class.white]="square.white">
+          <div
+            [class.dark]="square.dark"
+            [class.white]="square.white"
+            [class.last-move]="square.lastMove"
+          >
             <span>{{ square.symbol }}</span>
             @if (square.showRank) {
               <small class="rank">{{ square.label[1] }}</small>
@@ -31,11 +35,12 @@ const PIECES = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' } as
     }
     .board {
       display: grid;
-      grid-template-columns: repeat(8, 1fr);
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      grid-template-rows: repeat(8, minmax(0, 1fr));
       aspect-ratio: 1;
       overflow: hidden;
       border-radius: 0.55rem;
-      background: #eae2cb;
+      background: #f0d9b6;
       container-type: inline-size;
     }
     .board > div {
@@ -45,7 +50,10 @@ const PIECES = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' } as
       color: #1f2c29;
     }
     .board > .dark {
-      background: #748b77;
+      background: #b58863;
+    }
+    .board > .last-move {
+      box-shadow: inset 0 0 0 100vmax #9cc70080;
     }
     .board > .white {
       color: #fffdf6;
@@ -74,28 +82,35 @@ const PIECES = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' } as
       right: 0.25rem;
     }
     figcaption {
-      margin-top: 0.7rem;
-      font-size: 0.8rem;
-      overflow-wrap: anywhere;
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
     }
   `,
 })
 export class Chessboard {
   readonly fen = input.required<string>();
   readonly flipped = input(false);
+  readonly lastMove = input<readonly [Square, Square]>();
 
   protected readonly squares = computed(() => {
     const board = new Chess(this.fen()).board().flat();
     if (this.flipped()) {
       board.reverse();
     }
+    const lastMove = new Set<string>(this.lastMove());
     return board.map((piece, index) => {
       const row = Math.floor(index / 8);
       const col = index % 8;
       const files = this.flipped() ? 'hgfedcba' : 'abcdefgh';
       const rank = this.flipped() ? row + 1 : 8 - row;
+      const label = files[col] + rank;
       return {
-        label: files[col] + rank,
+        label,
+        lastMove: lastMove.has(label),
         dark: (row + col) % 2 === 1,
         white: piece?.color === 'w',
         symbol: piece ? PIECES[piece.type] : '',

@@ -10,7 +10,6 @@
     margin: 0;
   }
   button,
-  input,
   textarea {
     font: inherit;
   }
@@ -18,44 +17,70 @@
 
 @layer base {
   :root {
-    color-scheme: light;
-    font-family: system-ui, sans-serif;
-    background: #f5f4ef;
-    color: #172620;
-    --surface: #fffefa;
-    --muted: #52635a;
-    --border: #cbd2c9;
-    --accent: #245742;
+    color-scheme: light dark;
+    font-family: Georgia, serif;
+    background: var(--background);
+    color: var(--ink);
+    --background: #f4f7fc;
+    --panel: #ecf1fb;
+    --field: #fff;
+    --ink: #191b27;
+    --muted: #43495e;
+    --border: #c7d1e3;
+    --accent: #1a1f60;
+    --on-accent: #fff;
+    --tonal: #dde4ff;
+    --on-tonal: #141a4e;
+    --divider: #dce5f4;
+    --focus: #2e64d3;
     --error: #9e2b22;
   }
 
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #0f1427;
+      --panel: #171f37;
+      --field: #12192f;
+      --ink: #e8eaf5;
+      --muted: #c5cbdc;
+      --border: #4a5776;
+      --accent: #c6d1ff;
+      --on-accent: #111852;
+      --tonal: #2b347f;
+      --on-tonal: #e7ebff;
+      --divider: #26324d;
+      --focus: #afc6ff;
+      --error: #ffb4ab;
+    }
+  }
+
   :focus-visible {
-    outline: 3px solid #4975bc;
+    outline: 3px solid var(--focus);
     outline-offset: 3px;
   }
   button {
-    border-radius: 0.45rem;
-    border: 1px solid var(--accent);
+    border-radius: 14px;
+    border: 1px solid transparent;
     background: var(--accent);
-    color: white;
+    color: var(--on-accent);
     padding: 0.65rem 0.9rem;
     cursor: pointer;
   }
   button.secondary {
     background: transparent;
     color: var(--accent);
+    border-color: var(--border);
   }
   button:disabled {
     opacity: 0.55;
     cursor: default;
   }
-  input,
   textarea {
-    padding: 0.6rem;
+    padding: 12px 14px;
     border: 1px solid var(--border);
-    border-radius: 0.4rem;
+    border-radius: 14px;
     color: inherit;
-    background: var(--surface);
+    background: var(--field);
   }
   [role='alert'] {
     color: var(--error);

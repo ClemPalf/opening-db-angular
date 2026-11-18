@@ -1,10 +1,11 @@
 import { parseGames } from '@mliebelt/pgn-parser';
-import { Chess } from 'chess.js';
+import { Chess, type Square } from 'chess.js';
 
 export interface StudyPosition {
   readonly fen: string;
   readonly move: string | null;
   readonly comment?: string;
+  readonly moveSquares?: readonly [Square, Square];
   readonly continuations: readonly StudyPosition[];
 }
 
@@ -43,6 +44,7 @@ function addLine(start: ImportPosition, moves: readonly ParsedMove[]): void {
     const child: ImportPosition = {
       fen: board.fen(),
       move: played.san,
+      moveSquares: [played.from, played.to],
       comment: move.commentAfter,
       continuations: [],
     };

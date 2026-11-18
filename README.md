@@ -13,7 +13,7 @@ npm ci
 npm start
 ```
 
-Visit http://localhost:4200. Choose `e4`, then `c5` to explore the bundled Sicilian variation. Select an earlier move in the breadcrumb to return to that position. Paste a single game into the PGN field to study your own line.
+Visit http://localhost:4200. Choose `e4`, then `c5` to explore the bundled Sicilian variation. Select an earlier move in the breadcrumb to return to that position. Expand **Import PGN** and paste a single game to study your own line.
 
 ## How the code fits together
 
@@ -22,7 +22,7 @@ Visit http://localhost:4200. Choose `e4`, then `c5` to explore the bundled Sicil
 3. [`study-page.ts`](src/app/study/study-page.ts) owns the current path and form. Signals keep the view tied to that path. Rewinding discards later positions from the path.
 4. [`chessboard.ts`](src/app/study/chessboard.ts) renders a position from FEN and handles display orientation.
 
-Start with the variation tests when extending the import. Browser persistence, repertoire editing and review are on the [migration backlog](ROADMAP.md).
+Start with the variation tests when extending the import. The study view follows Chessbook’s light and dark palettes, framed brown board, and board navigation. Browser persistence, repertoire editing, review, and the remaining visual details are on the [migration backlog](ROADMAP.md).
 
 ## Checks
 

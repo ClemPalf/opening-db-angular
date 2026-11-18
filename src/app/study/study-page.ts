@@ -32,6 +32,20 @@ export class StudyPage {
     this.path.update((path) => [...path, position]);
   }
 
+  protected advance(toEnd: boolean): void {
+    const continuation = this.position().continuations[0];
+    if (!continuation) return;
+    const path = [...this.path(), continuation];
+    if (toEnd) {
+      let next = continuation.continuations[0];
+      while (next) {
+        path.push(next);
+        next = next.continuations[0];
+      }
+    }
+    this.path.set(path);
+  }
+
   protected rewind(index: number): void {
     this.path.update((path) => path.slice(0, index + 1));
   }
