@@ -1,0 +1,63 @@
+@layer reset, base;
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+  }
+  button,
+  input,
+  textarea {
+    font: inherit;
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+    font-family: system-ui, sans-serif;
+    background: #f5f4ef;
+    color: #172620;
+    --surface: #fffefa;
+    --muted: #52635a;
+    --border: #cbd2c9;
+    --accent: #245742;
+    --error: #9e2b22;
+  }
+
+  :focus-visible {
+    outline: 3px solid #4975bc;
+    outline-offset: 3px;
+  }
+  button {
+    border-radius: 0.45rem;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: white;
+    padding: 0.65rem 0.9rem;
+    cursor: pointer;
+  }
+  button.secondary {
+    background: transparent;
+    color: var(--accent);
+  }
+  button:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+  input,
+  textarea {
+    padding: 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 0.4rem;
+    color: inherit;
+    background: var(--surface);
+  }
+  [role='alert'] {
+    color: var(--error);
+  }
+}

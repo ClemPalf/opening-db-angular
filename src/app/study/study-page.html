@@ -1,0 +1,53 @@
+<main>
+  <header>
+    <h1>Opening DB</h1>
+    <p>Import an opening line and explore its variations.</p>
+  </header>
+
+  <section class="study" aria-labelledby="study-heading">
+    <app-chessboard [fen]="position().fen" [flipped]="flipped()" />
+    <div class="card">
+      <h2 id="study-heading">Study line</h2>
+      <nav aria-label="Moves played" class="button-row">
+        @for (node of path(); track $index; let index = $index; let last = $last) {
+          <button
+            type="button"
+            class="secondary"
+            [attr.aria-current]="last ? 'step' : null"
+            (click)="rewind(index)"
+          >
+            {{ node.move ?? 'Start' }}
+          </button>
+        }
+      </nav>
+
+      @if (position().comment; as comment) {
+        <p>{{ comment }}</p>
+      }
+      <h3>Next move</h3>
+      <div class="button-row">
+        @for (next of position().continuations; track next) {
+          <button type="button" (click)="choose(next)">{{ next.move }}</button>
+        } @empty {
+          <p>End of line.</p>
+        }
+      </div>
+
+      <button type="button" class="secondary flip" (click)="flipped.set(!flipped())">
+        Flip board
+      </button>
+    </div>
+  </section>
+
+  <section class="card import" aria-labelledby="import-heading">
+    <h2 id="import-heading">Import PGN</h2>
+    <form (submit)="loadPgn($event)">
+      <label for="pgn">PGN notation</label>
+      <textarea id="pgn" rows="4" [formField]="importForm.text"></textarea>
+      @if (error()) {
+        <p role="alert">{{ error() }}</p>
+      }
+      <button type="submit">Load study line</button>
+    </form>
+  </section>
+</main>
