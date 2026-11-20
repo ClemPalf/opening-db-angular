@@ -1,12 +1,17 @@
 <main>
   <header class="toolbar">
     <a routerLink="/" aria-label="Back to repertoires" title="Back to repertoires">←</a>
-    <h1>{{ title() }}</h1>
+    <h1 #pageHeading tabindex="-1">{{ title() }}</h1>
   </header>
 
   @if (position(); as current) {
-    <section class="study" aria-labelledby="study-heading">
-      <div class="board-pane">
+    <section
+      class="study"
+      aria-label="Repertoire study"
+      [style.--board-width.%]="boardWidth()"
+      #layout
+    >
+      <div class="board-pane" id="board-pane">
         <div class="board-frame">
           <app-chessboard
             [fen]="current.fen"
@@ -15,10 +20,16 @@
           />
         </div>
 
-        <nav class="board-controls" aria-label="Board controls">
+        <nav
+          class="board-controls"
+          aria-label="Board controls"
+          tabindex="-1"
+          (keydown)="navigateWithKeyboard($event)"
+        >
           <button
             type="button"
             aria-label="Go to start"
+            aria-keyshortcuts="Home"
             title="Go to start"
             [disabled]="path().length === 1"
             (click)="rewind(0)"
@@ -28,6 +39,7 @@
           <button
             type="button"
             aria-label="Previous move"
+            aria-keyshortcuts="ArrowLeft"
             title="Previous move"
             [disabled]="path().length === 1"
             (click)="rewind(path().length - 2)"
@@ -37,6 +49,7 @@
           <button
             type="button"
             aria-label="Next move"
+            aria-keyshortcuts="ArrowRight"
             title="Next move"
             [disabled]="!current.continuations.length"
             (click)="advance(false)"
@@ -46,6 +59,7 @@
           <button
             type="button"
             aria-label="Go to end of line"
+            aria-keyshortcuts="End"
             title="Go to end of line"
             [disabled]="!current.continuations.length"
             (click)="advance(true)"
@@ -55,6 +69,7 @@
           <button
             type="button"
             aria-label="Flip board"
+            aria-keyshortcuts="F"
             title="Flip board"
             class="flip"
             [attr.aria-pressed]="flipped()"
@@ -65,10 +80,23 @@
         </nav>
       </div>
 
-      <div class="divider" aria-hidden="true"></div>
+      <div
+        class="divider"
+        role="separator"
+        tabindex="0"
+        aria-label="Board panel width"
+        aria-orientation="vertical"
+        aria-controls="board-pane"
+        aria-valuemin="30"
+        aria-valuemax="70"
+        [attr.aria-valuenow]="boardWidth()"
+        (pointerdown)="startResize($event, layout)"
+        (pointermove)="resize($event)"
+        (lostpointercapture)="stopResize($event)"
+        (keydown)="resizeWithKeyboard($event)"
+      ></div>
       <div class="card">
-        <h2 id="study-heading">Study line</h2>
-        <nav aria-label="Moves played" class="button-row">
+        <nav aria-label="Moves played" class="button-row" tabindex="-1" #playedMoves>
           @for (node of path(); track $index; let index = $index; let last = $last) {
             <button
               type="button"
@@ -84,14 +112,30 @@
         @if (current.comment; as comment) {
           <p>{{ comment }}</p>
         }
-        <h3>Next move</h3>
-        <div class="button-row">
-          @for (next of current.continuations; track next) {
-            <button type="button" (click)="choose(next)">{{ next.move }}</button>
-          } @empty {
-            <p>End of line.</p>
-          }
-        </div>
+        @if (current.continuations.length) {
+          <h2>
+            {{
+              isRepertoireTurn()
+                ? 'This move is in your repertoire'
+                : 'Choose a move to prepare for'
+            }}
+          </h2>
+          <ul class="move-list">
+            @for (next of current.continuations; track next; let first = $first) {
+              <li>
+                <button
+                  type="button"
+                  [class.primary]="first && isRepertoireTurn()"
+                  (click)="choose(next)"
+                >
+                  <span>{{ next.move }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        } @else {
+          <h2>End of line</h2>
+        }
       </div>
     </section>
   } @else {

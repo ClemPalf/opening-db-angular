@@ -1,20 +1,18 @@
+import { NgOptimizedImage } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { Chess, type Square } from 'chess.js';
 
-const PIECES = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' } as const;
-
 @Component({
   selector: 'app-chessboard',
+  imports: [NgOptimizedImage],
   template: `
     <figure aria-label="Chess position">
       <div class="board" aria-hidden="true">
         @for (square of squares(); track square.label) {
-          <div
-            [class.dark]="square.dark"
-            [class.white]="square.white"
-            [class.last-move]="square.lastMove"
-          >
-            <span>{{ square.symbol }}</span>
+          <div [class.dark]="square.dark" [class.last-move]="square.lastMove">
+            @if (square.image; as image) {
+              <img [ngSrc]="image" alt="" fill priority />
+            }
             @if (square.showRank) {
               <small class="rank">{{ square.label[1] }}</small>
             }
@@ -39,8 +37,7 @@ const PIECES = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' } as
       grid-template-rows: repeat(8, minmax(0, 1fr));
       aspect-ratio: 1;
       overflow: hidden;
-      border-radius: 0.55rem;
-      background: #f0d9b6;
+      background: #f0d9b5;
       container-type: inline-size;
     }
     .board > div {
@@ -55,18 +52,8 @@ const PIECES = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' } as
     .board > .last-move {
       box-shadow: inset 0 0 0 100vmax #9cc70080;
     }
-    .board > .white {
-      color: #fffdf6;
-    }
-    span {
-      font:
-        9cqw/1 'Arial Unicode MS',
-        'DejaVu Sans',
-        'Segoe UI Symbol',
-        serif;
-      text-shadow:
-        0 1px 1px #1b2b21,
-        0 0 1px #1b2b21;
+    img {
+      object-fit: contain;
     }
     small {
       position: absolute;
@@ -112,8 +99,7 @@ export class Chessboard {
         label,
         lastMove: lastMove.has(label),
         dark: (row + col) % 2 === 1,
-        white: piece?.color === 'w',
-        symbol: piece ? PIECES[piece.type] : '',
+        image: piece ? 'pieces/' + piece.color + piece.type + '.svg' : null,
         showRank: col === 0,
         showFile: row === 7,
       };

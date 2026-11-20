@@ -214,6 +214,7 @@ fieldset {
   color: var(--ink);
   border: 1px solid var(--border);
   border-radius: 12px;
+  border-color: var(--control-border);
   text-transform: capitalize;
   cursor: pointer;
 }

@@ -66,7 +66,7 @@ export class RepertoireLibrary {
     } catch {
       throw new Error('Browser storage is unavailable.');
     }
-    if (!raw) return [];
+    if (raw == null) return [];
     try {
       const data: unknown = JSON.parse(raw);
       if (

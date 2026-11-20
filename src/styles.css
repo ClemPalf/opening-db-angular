@@ -28,6 +28,7 @@
     --ink: #191b27;
     --muted: #43495e;
     --border: #c7d1e3;
+    --control-border: #737f9a;
     --accent: #1a1f60;
     --on-accent: #fff;
     --tonal: #dde4ff;
@@ -52,6 +53,7 @@
       --ink: #e8eaf5;
       --muted: #c5cbdc;
       --border: #4a5776;
+      --control-border: #8995af;
       --accent: #c6d1ff;
       --on-accent: #111852;
       --tonal: #2b347f;
@@ -79,7 +81,7 @@
   button.secondary {
     background: transparent;
     color: var(--accent);
-    border-color: var(--border);
+    border-color: var(--control-border);
   }
   button:disabled {
     opacity: 0.55;
@@ -88,7 +90,7 @@
   input[type='text'],
   textarea {
     padding: 12px 14px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--control-border);
     border-radius: 14px;
     color: inherit;
     background: var(--field);

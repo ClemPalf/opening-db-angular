@@ -53,4 +53,27 @@ describe('StudyPage', () => {
     await click('[aria-label="Go to start"]');
     expect(page.querySelectorAll('.last-move')).toHaveLength(0);
   });
+
+  it('keeps board shortcuts separate from split-view resizing', async () => {
+    const fixture = TestBed.createComponent(StudyPage);
+    await fixture.whenStable();
+    const page: HTMLElement = fixture.nativeElement;
+    const press = async (element: Element, key: string) => {
+      element.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+      await fixture.whenStable();
+    };
+    const separator = page.querySelector('[role="separator"]')!;
+    const controls = page.querySelector('.board-controls')!;
+
+    await press(separator, 'End');
+    expect(separator.getAttribute('aria-valuenow')).toBe('70');
+    expect(page.querySelector('[aria-current="step"]')?.textContent.trim()).toBe('Start');
+
+    await press(controls, 'ArrowRight');
+    expect(page.querySelector('[aria-current="step"]')?.textContent.trim()).toBe('e4');
+    await press(controls, 'f');
+    expect(page.querySelector('[aria-label="Flip board"]')?.getAttribute('aria-pressed')).toBe(
+      'true',
+    );
+  });
 });

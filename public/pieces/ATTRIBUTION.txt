@@ -1,0 +1,9 @@
+Cburnett chess piece artwork by Colin M. L. Burnett (Wikimedia user Cburnett).
+Author: https://commons.wikimedia.org/wiki/User:Cburnett
+Source: https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces/Standard_transparent
+The files are redistributed unmodified under CC BY-SA 3.0:
+https://creativecommons.org/licenses/by-sa/3.0/
+
+File names use w/b for white/black followed by the piece letter (k, q, r, b, n, p).
+The corresponding Wikimedia originals are Chess_<piece>lt45.svg for white and
+Chess_<piece>dt45.svg for black.

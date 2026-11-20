@@ -33,7 +33,12 @@ export class RepertoireList {
   protected readonly target = signal<SavedRepertoire | null>(null);
   protected readonly confirmingDelete = signal(false);
   protected readonly error = signal('');
+  private readonly heading = viewChild.required<ElementRef<HTMLElement>>('heading');
   protected readonly sides = ['white', 'black'] as const;
+
+  constructor() {
+    afterNextRender(() => this.heading().nativeElement.focus());
+  }
 
   protected open(action: Action, target: SavedRepertoire | null = null): void {
     this.action.set(action);
@@ -53,13 +58,14 @@ export class RepertoireList {
     event.preventDefault();
     const { name, side, pgn } = this.draft();
     const target = this.target();
+    const firstCreation = this.action() === 'create' && !this.library.repertoires().length;
     try {
       if (target && this.confirmingDelete()) this.library.remove(target.id);
       else if (target) this.library.rename(target.id, name);
       else this.library.create(name, side, this.action() === 'import' ? pgn : null);
       this.close();
-      if (this.confirmingDelete()) {
-        this.dialog().nativeElement.ownerDocument.getElementById('library-title')?.focus();
+      if (this.confirmingDelete() || firstCreation) {
+        this.heading().nativeElement.focus();
       }
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not save the repertoire.');
