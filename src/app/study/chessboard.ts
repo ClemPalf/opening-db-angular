@@ -11,7 +11,7 @@ import { Chess, type Square } from 'chess.js';
         @for (square of squares(); track square.label) {
           <div [class.dark]="square.dark" [class.last-move]="square.lastMove">
             @if (square.image; as image) {
-              <img [ngSrc]="image" alt="" fill priority />
+              <img [ngSrc]="image" alt="" fill loading="eager" />
             }
             @if (square.showRank) {
               <small class="rank">{{ square.label[1] }}</small>
