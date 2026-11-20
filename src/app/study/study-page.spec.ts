@@ -1,8 +1,10 @@
+import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { StudyPage } from './study-page';
 
 describe('StudyPage', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [provideRouter([])] }));
   it('lets the user choose a variation and return to the root', async () => {
     const fixture = TestBed.createComponent(StudyPage);
     await fixture.whenStable();

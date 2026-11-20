@@ -10,6 +10,7 @@
     margin: 0;
   }
   button,
+  input,
   textarea {
     font: inherit;
   }
@@ -31,6 +32,13 @@
     --on-accent: #fff;
     --tonal: #dde4ff;
     --on-tonal: #141a4e;
+    --secondary-container: #dce7ff;
+    --on-secondary-container: #10244f;
+    --surface-gradient: linear-gradient(
+      color-mix(in srgb, var(--tonal) 35%, var(--background)),
+      var(--background) 50%,
+      color-mix(in srgb, var(--secondary-container) 25%, var(--background))
+    );
     --divider: #dce5f4;
     --focus: #2e64d3;
     --error: #9e2b22;
@@ -48,6 +56,8 @@
       --on-accent: #111852;
       --tonal: #2b347f;
       --on-tonal: #e7ebff;
+      --secondary-container: #2a3c69;
+      --on-secondary-container: #dfe8ff;
       --divider: #26324d;
       --focus: #afc6ff;
       --error: #ffb4ab;
@@ -75,6 +85,7 @@
     opacity: 0.55;
     cursor: default;
   }
+  input[type='text'],
   textarea {
     padding: 12px 14px;
     border: 1px solid var(--border);

@@ -1,6 +1,6 @@
 # Opening DB
 
-Study chess opening lines and their variations in the browser. This Angular port starts with the PGN study workflow from the original Flutter app.
+Study chess opening lines and their variations in the browser. Chessbook is an Angular port of the original Flutter app.
 
 Clément Palfroy created the original Flutter app to improve his chess by building and studying his opening repertoires. The Angular implementation is being developed with Codex.
 
@@ -13,16 +13,18 @@ npm ci
 npm start
 ```
 
-Visit http://localhost:4200. Choose `e4`, then `c5` to explore the bundled Sicilian variation. Select an earlier move in the breadcrumb to return to that position. Expand **Import PGN** and paste a single game to study your own line.
+Open [Chessbook locally](http://localhost:4200). Use **Create Repertoire** to name an empty white or black repertoire, or **Import PGN** to name a repertoire and paste one game with its variations. Open a card to study its lines. Its options button lets you rename or delete the repertoire. The empty list also links to a bundled demo. Choose `e4` and then `c5` to explore the Sicilian line.
+
+Repertoires are saved on the current browser origin and profile in versioned local storage. Served deployments need HTTPS. Clearing site data removes the saved library. The import accepts one game up to 75,000 characters, including comments, variations and a custom starting position. The browser uses native dialogs for creation, import and repertoire options.
 
 ## How the code fits together
 
-1. [`app.routes.ts`](src/app/app.routes.ts) lazy-loads the study feature.
-2. [`repertoire.ts`](src/app/study/repertoire.ts) parses PGN and checks each move with chess.js. Each position stores its FEN, incoming move, comment and next positions. Branches begin at the position before the move they replace.
-3. [`study-page.ts`](src/app/study/study-page.ts) owns the current path and form. Signals keep the view tied to that path. Rewinding discards later positions from the path.
-4. [`chessboard.ts`](src/app/study/chessboard.ts) renders a position from FEN and handles display orientation.
+1. [app.routes.ts](src/app/app.routes.ts) lazy-loads the library and study pages. A saved repertoire opens at its own study URL.
+2. [repertoire-library.ts](src/app/repertoires/repertoire-library.ts) validates the PGN before writing to browser storage and records the selected side and move count.
+3. [repertoire.ts](src/app/study/repertoire.ts) checks PGN moves with chess.js. Each position stores its FEN, incoming move, comment and next positions. Branches begin at the position before the move they replace.
+4. [study-page.ts](src/app/study/study-page.ts) uses signals to track the current line and board orientation. The breadcrumb returns to an earlier position, and [chessboard.ts](src/app/study/chessboard.ts) renders the resulting FEN.
 
-Start with the variation tests when extending the import. The study view follows Chessbook’s light and dark palettes, framed brown board, and board navigation. Browser persistence, repertoire editing, review, and the remaining visual details are on the [migration backlog](ROADMAP.md).
+The library follows the Flutter source for its list hierarchy, surface gradient, cards, side and move badges, and create and import controls. Settings and opening-mistake actions will appear when those workflows are available. The [migration backlog](ROADMAP.md) tracks editing, review, and the remaining study UI work.
 
 ## Checks
 
@@ -32,4 +34,4 @@ npm run test:ci
 npm run build
 ```
 
-The same checks run on pushes and pull requests. Tests cover PGN variations, custom starting positions, invalid imports and study navigation.
+The same checks run on pushes and pull requests. Tests cover PGN variations, custom starting positions, invalid imports, library persistence and study navigation.

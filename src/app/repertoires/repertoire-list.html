@@ -1,0 +1,143 @@
+<main>
+  <header class="toolbar">
+    <h1 id="library-title" tabindex="-1">Chessbook</h1>
+    <button type="button" class="tonal" (click)="open('import')">↑ Import PGN</button>
+  </header>
+
+  <div class="library">
+    @if (library.storageError(); as error) {
+      <p role="alert" class="storage-error">{{ error }}</p>
+    }
+    @if (library.repertoires().length) {
+      <ul>
+        @for (entry of library.repertoires(); track entry.id) {
+          <li>
+            <a [routerLink]="['/study', entry.id]">
+              <span class="piece" [class.black]="entry.side === 'black'" aria-hidden="true">
+                {{ entry.side === 'white' ? '♘' : '♞' }}
+              </span>
+              <span class="details">
+                <strong>{{ entry.name }}</strong>
+                <span class="pills">
+                  <span>{{ entry.side }} side</span>
+                  <span>{{ entry.moveCount }} {{ entry.moveCount === 1 ? 'move' : 'moves' }}</span>
+                </span>
+              </span>
+            </a>
+            <button
+              type="button"
+              class="options"
+              [attr.aria-label]="'Repertoire options for ' + entry.name"
+              title="Repertoire options"
+              (click)="open('options', entry)"
+            >
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M3 6h7m4 0h7M3 12h12m4 0h2M3 18h3m4 0h11M10 3v6m9 0v6M6 15v6" />
+              </svg>
+            </button>
+          </li>
+        }
+      </ul>
+      <button type="button" class="new" (click)="open('create')">＋ New Repertoire</button>
+    } @else {
+      <section class="empty" aria-labelledby="empty-title">
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 64 64"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+        >
+          <rect x="17" y="8" width="37" height="39" rx="3" />
+          <path d="M10 17v34a4 4 0 0 0 4 4h32M25 20h21M25 27h21M25 34h14" />
+        </svg>
+        <h2 id="empty-title">No repertoires yet</h2>
+        <p>Create your first repertoire to start building your opening memory.</p>
+        <button type="button" (click)="open('create')">＋ Create Repertoire</button>
+        <a routerLink="/study">Try the demo</a>
+      </section>
+    }
+  </div>
+</main>
+
+<dialog #editor aria-labelledby="editor-title">
+  <h2 id="editor-title">
+    @if (confirmingDelete()) {
+      Delete repertoire?
+    } @else {
+      @switch (action()) {
+        @case ('create') {
+          Create Repertoire
+        }
+        @case ('import') {
+          Import PGN
+        }
+        @case ('options') {
+          Repertoire options
+        }
+      }
+    }
+  </h2>
+  <form (submit)="submit($event)">
+    @if (confirmingDelete()) {
+      <p>Delete “{{ target()?.name }}” and its saved moves from this browser?</p>
+    } @else {
+      <label for="repertoire-name">Name</label>
+      <input id="repertoire-name" type="text" [formField]="editorForm.name" autofocus />
+      @if (action() !== 'options') {
+        <fieldset>
+          <legend>Play as</legend>
+          <div class="side-choices">
+            @for (side of sides; track side) {
+              <label [class.selected]="editorForm.side().value() === side">
+                <input type="radio" [value]="side" [formField]="editorForm.side" />
+                {{ side }}
+              </label>
+            }
+          </div>
+        </fieldset>
+      }
+      @if (action() === 'import') {
+        <label for="repertoire-pgn">PGN</label>
+        <textarea
+          id="repertoire-pgn"
+          rows="5"
+          placeholder="1. e4 e5 2. Nf3"
+          [formField]="editorForm.pgn"
+        ></textarea>
+      }
+    }
+    @if (error()) {
+      <p role="alert">{{ error() }}</p>
+    }
+    <div class="actions">
+      @if (target() && !confirmingDelete()) {
+        <button type="button" class="danger" (click)="confirmDelete()">Delete</button>
+      }
+      <button type="button" class="secondary cancel" #cancelButton (click)="close()">Cancel</button>
+      <button type="submit" [class.danger]="confirmingDelete()">
+        @if (confirmingDelete()) {
+          Delete repertoire
+        } @else {
+          @switch (action()) {
+            @case ('create') {
+              Create
+            }
+            @case ('import') {
+              Import
+            }
+            @case ('options') {
+              Rename
+            }
+          }
+        }
+      </button>
+    </div>
+  </form>
+</dialog>
